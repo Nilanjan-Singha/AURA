@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TrackerProvider } from "./context/Context";
-import { APIProvider } from "./context/APIContext";
+import { APIProvider } from "./context/ApiContext";
 import HomePage from "./pages/Homepage";
 import Tracker from "./pages/Tracker";
 
