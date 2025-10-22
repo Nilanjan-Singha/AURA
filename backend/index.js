@@ -25,14 +25,13 @@ app.get("/", (req, res) => {
 });
 
 // 🔹 OMDb Movie Search
-const OMDB_API_KEY = "cb92340e"; // replace with your key
 app.get("/api/movies", async (req, res) => {
   const { q } = req.query;
   if (!q) return res.status(400).json({ error: "Query missing" });
 
   try {
     const response = await fetch(
-      `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(
+      `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&s=${encodeURIComponent(
         q
       )}`
     );
@@ -49,7 +48,7 @@ app.get("/api/movies/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const response = await fetch(
-      `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${id}&plot=short`
+      `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&i=${id}&plot=short`
     );
     const data = await response.json();
     res.json(data);
@@ -71,7 +70,7 @@ app.get("/api/anime", async (req, res) => {
         q
       )}&limit=${limit}`,
       {
-        headers: { "X-MAL-CLIENT-ID": MAL_CLIENT_ID },
+        headers: { "X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID },
       }
     );
     const data = await response.json();
@@ -93,7 +92,7 @@ app.get("/api/manga", async (req, res) => {
         q
       )}&limit=${limit}`,
       {
-        headers: { "X-MAL-CLIENT-ID": MAL_CLIENT_ID },
+        headers: { "X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID },
       }
     );
     const data = await response.json();
@@ -124,8 +123,7 @@ app.get("/api/books", async (req, res) => {
   }
 });
 
-// 🔹 GameBrain API Search
-const RAWG_API_KEY = "f74939506cd2480cbd1bbbe9dc561365"
+// 🔹 RAWG API Search
 
 app.get("/api/games", async (req, res) => {
   const { q, limit = 10 } = req.query;
@@ -133,7 +131,7 @@ app.get("/api/games", async (req, res) => {
 
   try {
     const response = await fetch(
-      `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(q)}&page_size=${limit}`
+      `https://api.rawg.io/api/games?key=${process.env.RAWG_API_KEY}&search=${encodeURIComponent(q)}&page_size=${limit}`
     );
     const data = await response.json();
     // map to your required fields:
