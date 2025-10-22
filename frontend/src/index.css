@@ -36,3 +36,11 @@ body {
 .fade-in {
   animation: fadeIn 0.5s ease-in;
 }
+
+/* Hide scrollbars for all browsers */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

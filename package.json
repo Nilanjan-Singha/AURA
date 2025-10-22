@@ -9,13 +9,13 @@
     "start": "node backend/index.js"
   },
   "dependencies": {
-    "express": "^5.1.0",
+    "concurrently": "^8.0.0",
     "cors": "^2.8.5",
-    "node-fetch": "^3.3.2",
-    "concurrently": "^8.0.0"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-      "vite": "^7.1.7"
-
+    "vite": "^7.1.7"
   }
 }

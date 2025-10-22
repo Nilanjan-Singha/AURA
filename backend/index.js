@@ -3,11 +3,16 @@ import fetch from "node-fetch"; // npm i node-fetch
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
+
+dotenv.config();
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+app.use(cors({
+  origin: "*", // or your frontend URL
+}));
 app.use(express.json());
 
 // ✅ Serve frontend build
@@ -140,6 +145,4 @@ app.get("/api/games", async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-  console.log(`Proxy server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

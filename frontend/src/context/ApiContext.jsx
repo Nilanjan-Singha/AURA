@@ -5,7 +5,9 @@ const APIContext = createContext();
 export const useAPI = () => useContext(APIContext);
 
 export const APIProvider = ({ children }) => {
-  const BASE_URL = "http://localhost:4000/api";
+  const BASE_URL = process.env.NODE_ENV === "production"
+  ? "https://aura-kl34.onrender.com"
+  : "http://localhost:4000";
 
   // 🔹 Movie search (OMDb)
   const searchMovies = async (query) => {
