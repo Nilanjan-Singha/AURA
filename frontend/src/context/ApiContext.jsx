@@ -12,21 +12,21 @@ export const APIProvider = ({ children }) => {
   // 🔹 Movie search (OMDb)
   const searchMovies = async (query) => {
     if (!query) return [];
-    const res = await fetch(`${BASE_URL}/movies?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`${BASE_URL}/api/movies?q=${encodeURIComponent(query)}`);
     const data = await res.json();
     return data.Search || [];
   };
 
   // 🔹 Movie details (OMDb)
   const getMovieDetails = async (id) => {
-    const res = await fetch(`${BASE_URL}/movies/${id}`);
+    const res = await fetch(`${BASE_URL}/api/movies/${id}`);
     return await res.json();
   };
 
   // 🔹 Anime search (MyAnimeList)
   const searchAnime = async (query, limit = 10) => {
     if (!query) return [];
-    const res = await fetch(`${BASE_URL}/anime?q=${encodeURIComponent(query)}&limit=${limit}`);
+    const res = await fetch(`${BASE_URL}/api/anime?q=${encodeURIComponent(query)}&limit=${limit}`);
     const data = await res.json();
     return data.data || [];
   };
@@ -34,7 +34,7 @@ export const APIProvider = ({ children }) => {
   // 🔹 Manga search (MyAnimeList)
   const searchManga = async (query, limit = 10) => {
     if (!query) return [];
-    const res = await fetch(`${BASE_URL}/manga?q=${encodeURIComponent(query)}&limit=${limit}`);
+    const res = await fetch(`${BASE_URL}/api/manga?q=${encodeURIComponent(query)}&limit=${limit}`);
     const data = await res.json();
     return data.data || [];
   };
@@ -44,7 +44,7 @@ export const APIProvider = ({ children }) => {
     if (!query) return [];
     try {
       const response = await fetch(
-        `${BASE_URL}/books?q=${encodeURIComponent(query)}`
+        `${BASE_URL}/api/books?q=${encodeURIComponent(query)}`
       );
       const data = await response.json();
       return data.items || [];
@@ -59,7 +59,7 @@ const searchGames = async (query) => {
   if (!query) return [];
   try {
     const response = await fetch(
-      `${BASE_URL}/games?q=${encodeURIComponent(query)}`
+      `${BASE_URL}/api/games?q=${encodeURIComponent(query)}`
     );
     if (!response.ok) throw new Error("Failed to fetch games");
     const data = await response.json();
