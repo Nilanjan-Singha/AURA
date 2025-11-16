@@ -1,25 +1,105 @@
 import React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import SidebarHome from "../components/SidebarHome";
 import TrackerCard from "../components/TrackerCard";
+import { useTheme } from "../context/ThemeContext";
+import { useTracker } from "../context/Context";
 
 const trackers = [
-  { id: "movie", name: "Movies", emoji: "🎬", color: "from-blue-500/30 to-blue-700/20" },
-  { id: "anime", name: "Anime", emoji: "🌀", color: "from-purple-500/30 to-purple-700/20" },
-  { id: "manga", name: "Manga", emoji: "📚", color: "from-green-500/30 to-green-700/20" },
-  { id: "books", name: "Books", emoji: "📖", color: "from-yellow-500/30 to-yellow-700/20" },
-  {id: "games", name: "Games", emoji: "🎮", color: "from-orange-500/30 to-orange-700/20" },
-  { id: "podcasts", name: "Podcasts", emoji: "🎧", color: "from-pink-500/30 to-pink-700/20" },
+  // media trackers
+
+  {
+    id: "movie",
+    name: "Movies",
+    emoji: "🎬",
+    color: "from-blue-500/30 to-blue-700/20",
+    type: "media",
+  },
+  {
+    id: "anime",
+    name: "Anime",
+    emoji: "🌀",
+    color: "from-purple-500/30 to-purple-700/20",
+    type: "media",
+  },
+  {
+    id: "manga",
+    name: "Manga",
+    emoji: "📚",
+    color: "from-green-500/30 to-green-700/20",
+    type: "media",
+  },
+  {
+    id: "books",
+    name: "Books",
+    emoji: "📖",
+    color: "from-yellow-500/30 to-yellow-700/20",
+    type: "media",
+  },
+  {
+    id: "games",
+    name: "Games",
+    emoji: "🎮",
+    color: "from-orange-500/30 to-orange-700/20",
+    type: "media",
+  },
+  // music tracker left
+  // { id: "podcasts", name: "Podcasts", emoji: "🎧", color: "from-pink-500/30 to-pink-700/20" },
+
+  // utility trackers
+  {
+    id: "contacts",
+    name: "Contacts",
+    emoji: "📇",
+    color: "from-sky-400/30 to-sky-700/20",
+    type: "utility",
+  },
+  {
+    id: "finance",
+    name: "Finance",
+    emoji: "💰",
+    color: "from-amber-500/30 to-amber-700/20",
+    type: "utility",
+  },
+  {
+    id: "subscriptions",
+    name: "Subscriptions",
+    emoji: "💳",
+    color: "from-rose-500/30 to-rose-700/20",
+    type: "utility",
+  },
+  {
+    id: "applications",
+    name: "Applications",
+    emoji: "💼",
+    color: "from-indigo-500/30 to-indigo-700/20",
+    type: "utility",
+  },
+  {
+    id: "passwords",
+    name: "Password Vault",
+    emoji: "🔐",
+    color: "from-teal-500/30 to-teal-700/20",
+  },
 ];
 
 const HomePage = () => {
   const navigate = useNavigate();
   const handleOpenTracker = (type) => navigate(`/tracker/${type}`);
 
+  const { theme } = useTheme();
+  const {username} = useTracker();
+
+  const addnewTracker = () =>{
+    alert("New trackers and custom tracker in v2, i am procastinating actually")
+  }
+
   return (
-    <div className="home m-0 sm:m-8 flex bg-[rgba(255, 255, 255, 0.87)] w-auto text-white min-h-screen">
-      <SidebarHome />
+    <div className={`home m-0 sm:p-8 flex bg-[rgba(255, 255, 255, 0.87)] w-auto text-white min-h-screen ${theme.gradient}`}>
+            <SidebarHome  />
+
 
       <main className="flex-1 overflow-y-auto">
         {/* Banner */}
@@ -29,8 +109,10 @@ const HomePage = () => {
             alt="Banner"
             className="w-full h-full object-cover opacity-70 rounded-lg"
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-[rgba(255, 255, 255, 0.87)]">
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">NILANJAN SINGHA</h1>
+          <div className="absolute inset-0 flex items-center justify-center bg-[rgba(255, 255, 255, 0.87)]" style={{ borderColor: theme.accent }}>
+            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight" style={{ color: theme.text }}>
+                {username?.toUpperCase()}
+            </h1>
           </div>
         </div>
 
@@ -38,7 +120,7 @@ const HomePage = () => {
         <div className="p-4 md:p-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl md:text-2xl font-semibold">Your Trackers</h2>
-            <button className="flex items-center gap-2 bg-black/10 px-4 py-2 rounded-xl hover:bg-blue-700 transition">
+            <button className="flex items-center gap-2 bg-black/10 px-4 py-2 rounded-xl hover:bg-blue-700 transition" onClick={addnewTracker}>
               <Plus className="w-4 h-4" /> Add New
             </button>
           </div>

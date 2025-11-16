@@ -66,9 +66,7 @@ app.get("/api/anime", async (req, res) => {
 
   try {
     const response = await fetch(
-      `https://api.myanimelist.net/v2/anime?q=${encodeURIComponent(
-        q
-      )}&limit=${limit}`,
+     `https://api.myanimelist.net/v2/anime?q=${encodeURIComponent(q)}&limit=${limit}&fields=title,main_picture,mean,genres`,
       {
         headers: { "X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID },
       }
@@ -88,9 +86,7 @@ app.get("/api/manga", async (req, res) => {
 
   try {
     const response = await fetch(
-      `https://api.myanimelist.net/v2/manga?q=${encodeURIComponent(
-        q
-      )}&limit=${limit}`,
+     `https://api.myanimelist.net/v2/manga?q=${encodeURIComponent(q)}&limit=${limit}&fields=title,main_picture,mean,genres`,
       {
         headers: { "X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID },
       }
@@ -106,22 +102,27 @@ app.get("/api/manga", async (req, res) => {
 // 🔹 Google Books API Search
 app.get("/api/books", async (req, res) => {
   const { q, maxResults = 10 } = req.query;
+
   if (!q) return res.status(400).json({ error: "Query missing" });
 
   try {
     const response = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-        q
-      )}&maxResults=${maxResults}`
+      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${maxResults}`,
+      {
+        headers: {
+          "User-Agent": "Mozilla/5.0",   // 👈 REQUIRED
+        },
+      }
     );
 
     const data = await response.json();
-     res.json(data || []);
+    res.json(data);
   } catch (error) {
-    console.error(error);
+    console.error("Books API error:", error);
     res.status(500).json({ error: "Failed to fetch books" });
   }
 });
+
 
 // 🔹 RAWG API Search
 

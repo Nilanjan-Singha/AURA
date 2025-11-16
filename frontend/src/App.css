@@ -2,7 +2,7 @@
   width: 100%;
   height: auto;
   margin: 0 auto;
-  margin-bottom: 50px;
+  /* margin-bottom: 50px; */
   /* padding: 2rem; */
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -13,7 +13,7 @@
 .tracker-root {
   padding: 6rem;
   padding-top: 2rem;
-  height: 100vh;
+  min-height: 100vh;
 }
 @media screen and (max-width: 640px) {
   #root{
@@ -23,4 +23,8 @@
     padding: 1rem;
     padding-top: 1rem;
   }
+}
+
+select option{
+  background: #000;
 }

@@ -1,13 +1,30 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Content from '../components/Content'
 import { useParams } from 'react-router-dom';
+import UtilityTable from '../components/UtilityTable';
+import { useTheme } from '../context/ThemeContext';
+import StatsModal from '../components/statsModal';
 
 const Tracker = () => {
   const { type } = useParams(); 
+  const utilityTypes = ["contacts", "finance", "subscriptions", "applications", "passwords"];
 
   const upperType = type.charAt(0).toUpperCase() + type.slice(1);
+
+  const {theme} = useTheme();
+
+  const [showstatModal, setshowstatModal] = useState(false);
+  const [statType, setStatType] = useState("movie");
+
+
+  const handleStatModal = (t) => {
+      setStatType(t);
+    setshowstatModal(true);
+    console.log("stats btn clicked")
+  }
+
 
 const typeIcons = {
   movie: "/moviewhite.png",
@@ -15,6 +32,11 @@ const typeIcons = {
   manga: "/mangawhite.png",
   books: "/bookswhite.png",
   games: "/game_.png",
+  contacts: "/contacts_.png",
+  finance: "/moneylogo.png",
+  subscriptions: "/subscription-cashflow_.png",
+  applications: "/joblogo2.png",
+  passwords: "/lock-password.png"
 };
 
 const src = typeIcons[type] || "/aurawhite.png";
@@ -48,11 +70,30 @@ const src = typeIcons[type] || "/aurawhite.png";
     "/game3.jpg",
   ]
 
+  const contactBanners = [
+    "/gen1.jpg",
+    "/gen2.jpg",
+    "/gen3.jpg"
+  ]
+
+  const financeBanners = [
+    "/finance1.jpg",
+    "/finance2.jpg",
+    "/finance3.jpg",
+    "/finance4.png",
+    "/finance5.jpg",
+    "/finance6.jpg",
+    "/finance7.png",
+
+  ]
+
 const banners = {
   movie: movieBanners,
   anime: animeBanners,
   manga: mangaBanners,
   games: gameBanners,
+  contacts: contactBanners,
+  finance: financeBanners
 };
 
 const getRandomBanner = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -61,8 +102,8 @@ const bannerSrc = banners[type] ? getRandomBanner(banners[type]) : "/aura3.jpg";
 
 
   return (
-    <div className='main '>
-         <div className='main tracker-root'>
+<div className={`main ${theme.gradient}`}>
+         <div className='main tracker-root' style={{ borderColor: theme.accent }}>
       <div className="header w-full flex flex-col gap-2 border-b  rounded-lg">
         {/* banner with logo on top  */}
         <div className="relative w-full h-40 sm:h-52 md:h-60 lg:h-72 xl:h-80  rounded-lg">
@@ -82,14 +123,24 @@ const bannerSrc = banners[type] ? getRandomBanner(banners[type]) : "/aura3.jpg";
     </div>
         </div>
         </div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mt-3 mb-2 px-3 sm:px-6"> {upperType} Tracker</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mt-3 mb-2 px-3 sm:px-6"  style={{ color: theme.text }}> {upperType} Tracker</h1>
       </div>
       <div className="content flex flex-col sm:flex-row mt-4 ">
-        <Sidebar type={type}/>
+        <Sidebar type={type} showstatModal={showstatModal} setshowstatModal={setshowstatModal} handleStatModal={handleStatModal}/>
       <div className="content sm:flex-1 p-6">
-        <Content type={type}/>
+        {utilityTypes.includes(type) ? (
+        <UtilityTable type={type} showstatModal={showstatModal} setshowstatModal={setshowstatModal} handleStatModal={handleStatModal} />
+      ) : (
+        <Content type={type} showstatModal={showstatModal} setshowstatModal={setshowstatModal} handleStatModal={handleStatModal} />
+      )}
         </div>
       </div>
+      {showstatModal && (
+      <StatsModal 
+      setshowstatModal={setshowstatModal}
+        type={statType}
+      />
+    )}
     </div>
     </div>
   )

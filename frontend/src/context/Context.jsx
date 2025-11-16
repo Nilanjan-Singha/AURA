@@ -1,16 +1,29 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { movieGenres, animeGenres, mangaGenres, bookGenres, gameGenres } from "../data/genres";
+import { movieGenres, animeGenres, mangaGenres, bookGenres, gameGenres, contactFilters, financeFilters, subscriptionFilters, applicationFilters, passwordFilters } from "../data/genres";
 
 export const TrackerContext = createContext();
 
 export const TrackerProvider = ({ children }) => {
+
+  // account personalising
+    const [username, setUsername] = useState("");
+    const [primaryUse, setPrimaryUse] = useState("");
+  
+  // trackers
   const [trackers, setTrackers] = useState({
-    movie: [],
+    // media
+    movies: [],
     anime: [],
     games: [],
     manga: [],
     books: [],
     podcasts: [],
+    // utilities
+    contacts:[],
+    finance:[],
+    subscriptions:[],
+    applications:[],
+    passwords:[]
   });
 
   // Load from localStorage on mount
@@ -27,6 +40,11 @@ export const TrackerProvider = ({ children }) => {
             manga: Array.isArray(parsed.manga) ? parsed.manga : [],
             books: Array.isArray(parsed.books) ? parsed.books : [],
             podcasts: Array.isArray(parsed.podcasts) ? parsed.podcasts : [],
+            contacts: Array.isArray(parsed.contacts) ? parsed.contacts : [],
+            finance: Array.isArray(parsed.finance) ? parsed.finance : [],
+            subscriptions: Array.isArray(parsed.subscriptions) ? parsed.subscriptions : [],
+            applications: Array.isArray(parsed.applications) ? parsed.applications : [],
+            passwords: Array.isArray(parsed.passwords) ? parsed.passwords : [],
           });
         }
       }
@@ -45,19 +63,28 @@ export const TrackerProvider = ({ children }) => {
   }, [trackers]);
 
   // Add new item
-  const addItem = (type, item) => {
-    const newItem = {
-      ...item,
-      id: item.id ?? Date.now(),
-      status: item.status ?? "Upcoming",
-      favourite: typeof item.favourite === "boolean" ? item.favourite : false,
-    };
-
-    setTrackers((prev) => ({
-      ...prev,
-      [type]: [...(Array.isArray(prev[type]) ? prev[type] : []), newItem],
-    }));
+const addItem = (type, item) => {
+  const newItem = {
+    ...item,
+    id: item.id ?? Date.now(),
+    status: item.status ?? "Upcoming",
+    favourite: typeof item.favourite === "boolean" ? item.favourite : false,
+    // always store genres as an array
+    genres: Array.isArray(item.genres)
+      ? item.genres
+      : item.genre
+      ? item.genre.split(",").map(g => g.trim())
+      : // fallback for utilities:
+        item.category
+        ? [item.category]
+        : [],
   };
+
+  setTrackers((prev) => ({
+    ...prev,
+    [type]: [...(Array.isArray(prev[type]) ? prev[type] : []), newItem],
+  }));
+};
 
   
 const updateItemStatus = (type, id, newStatus) => {
@@ -99,19 +126,37 @@ const toggleFavourite = (type, id) => {
         return bookGenres;
       case "games":
         return gameGenres;
+      case "contacts":
+        return contactFilters;
+      case "finance":
+        return financeFilters;
+      case "subscriptions":
+        return subscriptionFilters;
+      case "applications":
+        return applicationFilters;
+      case "passwords":
+        return passwordFilters;
       default:
         return [];
     }
   };
+  // filtering by genres
+    const [selectedGenres, setSelectedGenres] = useState([]);
 
   return (
     <TrackerContext.Provider
       value={{
+        username,
+        primaryUse,
+        setUsername,
+        setPrimaryUse,
         trackers,
         addItem,
         getGenres,
         updateItemStatus,
         toggleFavourite,
+        selectedGenres,
+        setSelectedGenres
       }}
     >
       {children}

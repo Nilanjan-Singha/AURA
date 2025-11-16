@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { X, Search, Plus } from "lucide-react";
 import { useAPI } from "../context/ApiContext";
+import { useTheme } from "../context/ThemeContext";
 
 const AddModal = ({ type, handleClose, handleAddItem }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCustomForm, setShowCustomForm] = useState(false);
+  const {theme} = useTheme();
 
   const { searchMovies, getMovieDetails, searchAnime, searchManga , searchBooks, searchGames} = useAPI();
 
@@ -31,86 +33,92 @@ const AddModal = ({ type, handleClose, handleAddItem }) => {
     }
   };
 
-  const handleSelect = async (item) => {
-    let newItem = {};
-    if (type === "movie") {
-      const full = await getMovieDetails(item.imdbID);
-      newItem = {
-        id: full.imdbID,
-        title: full.Title,
-        poster: full.Poster !== "N/A" ? full.Poster : "/placeholder.png",
-        rating: parseFloat(full.imdbRating) || 0,
-        genre: full.Genre || "Unknown",
-        year: full.Year,
-        status: "Upcoming",
-        favourite: false,
-      };
-    } else if (type === "anime" || type === "manga") {
-      newItem = {
-        id: item.node.id,
-        title: item.node.title,
-        poster: item.node.main_picture?.medium || "/placeholder.png",
-        rating: item.node.mean || 0,
-        genre: type,
-        status: "Upcoming",
-        favourite: false,
-      };
-    } else if (type === "books") {
-      newItem = {
-        id: item.id,
-        title: item.volumeInfo.title,
-        poster: item.volumeInfo.imageLinks?.thumbnail || "/placeholder.png",
-        rating: item.volumeInfo.averageRating || 0,
-        genre: "Books",
-        authors: item.volumeInfo.authors,
-        publishedDate: item.volumeInfo.publishedDate,
-        description: item.volumeInfo.description,
-        status: "Upcoming",
-        favourite: false,
-      };
-    } else if (type === "games") {
-      newItem = {
+const handleSelect = async (item) => {
+  let newItem = {};
+
+  if (type === "movie") {
+    const full = await getMovieDetails(item.imdbID);
+    newItem = {
+      id: full.imdbID,
+      title: full.Title,
+      poster: full.Poster !== "N/A" ? full.Poster : "/placeholder.png",
+      rating: parseFloat(full.imdbRating) || 0,
+      genres: full.Genre ? full.Genre.split(",").map(g => g.trim()) : [],
+      year: full.Year,
+      status: "Upcoming",
+      favourite: false,
+    };
+  } else if (type === "anime" || type === "manga") {
+    newItem = {
+      id: item.node.id,
+      title: item.node.title,
+      poster: item.node.main_picture?.medium || "/placeholder.png",
+      rating: item.node.mean || 0,
+      genres: Array.isArray(item.node.genres)
+        ? item.node.genres.map(g => g.name)
+        : [],
+      status: "Upcoming",
+      favourite: false,
+    };
+  } else if (type === "books") {
+    newItem = {
+      id: item.id,
+      title: item.volumeInfo.title,
+      poster: item.volumeInfo.imageLinks?.thumbnail || "/placeholder.png",
+      rating: item.volumeInfo.averageRating || 0,
+      genres: item.volumeInfo.categories || [],
+      authors: item.volumeInfo.authors,
+      publishedDate: item.volumeInfo.publishedDate,
+      description: item.volumeInfo.description,
+      status: "Upcoming",
+      favourite: false,
+    };
+  } else if (type === "games") {
+    newItem = {
       id: item.id,
       title: item.name,
       poster: item.background_image || "/placeholder.png",
       rating: item.rating || 0,
-      genre: item.genres?.map(g => g.name).join(', ') || "Games",
+      genres: item.genres?.map(g => g.name) || [],
       releaseDate: item.released,
-      platforms: item.platforms?.map(p => p.platform.name),
+      platforms: item.platforms?.map(p => p.platform.name) || [],
       status: "Upcoming",
       favourite: false,
-      };
-    }
+    };
+  }
 
-    handleAddItem(newItem);
-    handleClose();
-  };
+  handleAddItem(newItem);
+  handleClose();
+};
 
-  const handleCustomSubmit = (e) => {
-    e.preventDefault();
-    const title = e.target.title.value.trim();
-    const poster = e.target.poster.value.trim();
-    const rating = parseFloat(e.target.rating.value) || 0;
+// Custom form submit
+const handleCustomSubmit = (e) => {
+  e.preventDefault();
+  const title = e.target.title.value.trim();
+  const poster = e.target.poster.value.trim();
+  const rating = parseFloat(e.target.rating.value) || 0;
 
-    if (!title) return;
+  if (!title) return;
 
-    handleAddItem({
-      id: Date.now(),
-      title,
-      poster: poster || "/placeholder.png",
-      rating,
-      genre: "Custom",
-      status: "Upcoming",
-      favourite: false,
-    });
-    handleClose();
-  };
+  handleAddItem({
+    id: Date.now(),
+    title,
+    poster: poster || "/placeholder.png",
+    rating,
+    genres: ["Custom"],
+    status: "Upcoming",
+    favourite: false,
+  });
+  handleClose();
+};
+
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="relative bg-black/90 border border-gray-700 shadow-xl p-6 rounded-2xl w-full max-w-md">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50" >
+<div className="relative border border-gray-700 shadow-xl p-6 rounded-2xl w-full max-w-md" style={{ background: theme.gradient }}
+>
         <X className="h-6 w-6 absolute top-4 right-4 cursor-pointer hover:text-red-500" onClick={handleClose} />
-        <h2 className="text-xl font-semibold mb-4">Add New {type}</h2>
+        <h2 className="text-xl font-semibold mb-4 text-white">Add New {type}</h2>
 
         <form onSubmit={handleSearch} className="flex items-center gap-2 mb-4">
           <div className="relative flex-1">
@@ -173,8 +181,7 @@ const AddModal = ({ type, handleClose, handleAddItem }) => {
           : type === "movie"
           ? item.Year
           : type === "games"
-          ? item.released
-          : item.node.start_date}
+          ? item.released : ""}
       </p>
     </div>
   </li>

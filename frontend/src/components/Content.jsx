@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import Card from "./Card";
 import AddModal from "./addModal";
 import { TrackerContext } from "../context/Context";
+import { useTheme } from "../context/ThemeContext";
 import {
   Search,
   Plus,
@@ -14,13 +15,14 @@ import {
 } from "lucide-react";
 
 const Content = ({ type }) => {
-const { trackers, addItem, updateItemStatus, toggleFavourite } = useContext(TrackerContext);
+const { trackers, addItem, updateItemStatus, toggleFavourite, selectedGenres, setSelectedGenres } = useContext(TrackerContext);
   const [filtered, setFiltered] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const {theme} = useTheme();
 
   const itemsPerPage = 20;
 
@@ -35,26 +37,39 @@ const { trackers, addItem, updateItemStatus, toggleFavourite } = useContext(Trac
   };
 
   // 🔹 Filtering, sorting, searching
-  useEffect(() => {
-    let list = Array.isArray(trackers[type]) ? [...trackers[type]] : [];
+useEffect(() => {
+  let list = Array.isArray(trackers[type]) ? [...trackers[type]] : [];
 
-    if (statusFilter !== "All")
-      list = list.filter((i) => i.status === statusFilter);
+  console.log("Raw items:", list);
+  console.log("Selected genres:", selectedGenres);
 
-    if (searchQuery)
-      list = list.filter((i) =>
-        (i.title || "").toLowerCase().includes(searchQuery.toLowerCase())
-      );
+ if (selectedGenres.length > 0)
+  list = list.filter(i => i.genres?.some(g => selectedGenres.includes(g)));
 
-    list.sort((a, b) =>
-      sortOrder === "asc"
-        ? (a.title || "").localeCompare(b.title || "")
-        : (b.title || "").localeCompare(a.title || "")
+
+  if (statusFilter !== "All") {
+    list = list.filter((i) => i.status === statusFilter);
+    console.log("After status filter:", list);
+  }
+
+  if (searchQuery) {
+    list = list.filter((i) =>
+      (i.title || "").toLowerCase().includes(searchQuery.toLowerCase())
     );
+    console.log("After search filter:", list);
+  }
 
-    setFiltered(list);
-    setCurrentPage(1);
-  }, [trackers, type, statusFilter, searchQuery, sortOrder]);
+  setFiltered(list);
+}, [
+  trackers,
+  type,
+  statusFilter,
+  searchQuery,
+  sortOrder,
+  selectedGenres,
+]);
+
+
 
   // 🔹 Pagination
   const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
@@ -76,11 +91,11 @@ const { trackers, addItem, updateItemStatus, toggleFavourite } = useContext(Trac
     }`;
 
   return (
-    <div className="w-auto h-auto px-4">
+    <div className="w-auto h-auto px-4" style={{ borderColor: theme.accent }}>
       {/* Header */}
       <div className="nav flex justify-between items-center mb-4">
-        <h2 className="text-lg sm:text-xl  font-semibold mb-0 sm:mb-4">Your {type} list</h2>
-        <div className="actions flex gap-2 items-center">
+        <h2 className="text-lg sm:text-xl  font-semibold mb-0 sm:mb-4" style={{ color: theme.text }}>Your {type} list</h2>
+        <div className="actions flex gap-2 items-center" style={{ color: theme.text }}>
           <SortAsc
             className="h-5 w-5 cursor-pointer hover:text-blue-500"
             onClick={() =>
@@ -105,13 +120,14 @@ const { trackers, addItem, updateItemStatus, toggleFavourite } = useContext(Trac
     sm:flex-wrap sm:justify-start
     text-lg sm:text-xl
   "
+  
 >
-  <div className={badgeClass("All")} onClick={() => setStatusFilter("All")}>
+  <div className={badgeClass("All")} onClick={() => setStatusFilter("All")} >
     <List className="h-5 w-5" /> All
   </div>
 
   <div
-    className={badgeClass("Watching")}
+    className={badgeClass("Watching")} 
     onClick={() => setStatusFilter("Watching")}
   >
     <Clock className="h-5 w-5" />{" "}
@@ -124,6 +140,7 @@ const { trackers, addItem, updateItemStatus, toggleFavourite } = useContext(Trac
   >
     <ListStart className="h-5 w-5" />{" "}
     {type === "manga" || type === "books" ? "To Read" : "Upcoming"}
+    
   </div>
 
   <div
@@ -136,7 +153,7 @@ const { trackers, addItem, updateItemStatus, toggleFavourite } = useContext(Trac
 
 
       {/* List */}
-<div className="movies grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
+<div className="movies grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4" style={{ color: theme.text }}>
   {currentItems.length === 0 ? (
     <p className="text-gray-400 mt-20 col-span-full text-center">
       No items found.
@@ -156,7 +173,7 @@ const { trackers, addItem, updateItemStatus, toggleFavourite } = useContext(Trac
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="pagination flex items-center justify-center gap-2 mt-6">
+        <div className="pagination flex items-center justify-center gap-2 mt-6" style={{ color: theme.text }}>
           <button
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}

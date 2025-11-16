@@ -2,6 +2,7 @@
 @import "tailwindcss";
 
 
+
 :root {
   /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
   font-family: "JetBrains Mono", monospace;
@@ -9,8 +10,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  /* color-scheme: dark light; */
+  /* color: rgba(255, 255, 255, 0.87); */
   background-color: #181818;
 
   font-synthesis: none;
@@ -43,4 +44,8 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
+}
+
+::-webkit-scrollbar{
+  display: none;
 }

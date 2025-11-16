@@ -84,3 +84,49 @@ export const gameGenres = [
   "Survival",
   "Open World",
 ];
+// Contacts
+export const contactFilters = [
+  "Friend",
+  "Family",
+  "Work",
+  "Service",
+  "Other",
+];
+
+// Finance
+export const financeFilters = [
+  "Credit",
+  "Debit",
+  "Investment",
+  "Savings",
+];
+
+// Subscriptions
+export const subscriptionFilters = [
+  "Streaming",
+  "Software",
+  "Gaming",
+  "Education",
+  "Utilities",
+  "Other",
+];
+
+// Applications (like job/scholarship/college)
+export const applicationFilters = [
+  "Job",
+  "Internship",
+  "College",
+  "Scholarship",
+  "Other",
+];
+
+// Passwords / Accounts
+export const passwordFilters = [
+  "Social",
+  "Work",
+  "Finance",
+  "Entertainment",
+  "Shopping",
+  "Utility",
+  "Other",
+];
